@@ -60,6 +60,22 @@ def update_tag(req):
     return req.Response(json={'err': 0, 'msg': 'Update tag successfully', 'data': data_resp})
 
 
+def delete_tag(req):
+    id = req.match_dict['id']
+    print(id)
+    if len(id) == 0:
+        return req.Response(json={'err': -1, 'msg': 'Parameters invalid'})
+    try:
+        oid = bson.ObjectId(id)
+    except:
+        return req.Response(json={'err': -1, 'msg': 'TagId invalid'})
+    count = models.delete_tag(oid)
+    print(count)
+    if count <= 0:
+        return req.Response(json={'err': -1, 'msg': 'Delete tag fail or not exist'})
+    return req.Response(json={'err': 0, 'msg': 'Delete tag successfully'})
+
+
 def get_tag(req):
     id = req.match_dict['id']
     print(id)

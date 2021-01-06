@@ -45,3 +45,8 @@ def total_tags():
 def get_slide_tags(skip, limit):
     rs = tag_table.find().skip(skip).limit(limit).sort("_id", DESCENDING)
     return rs
+
+
+def delete_tag(oid):
+    rs = tag_table.delete_one({"_id": oid})
+    return rs.deleted_count
