@@ -120,6 +120,7 @@ def jinja(request):
                             mime_type='text/html')
 
 
+# https://github.com/squeaky-pl/japronto
 if __name__ == '__main__':
     app = Application()
 
@@ -148,7 +149,7 @@ if __name__ == '__main__':
     r.add_route('/template', jinja)
 
     # Tag API
-    # http://localhost:8080/tag
+    # http://localhost:8080/tags
     r.add_route('/tag', tag_handler.add_tag, method='POST')
     r.add_route('/tag', tag_handler.update_tag, method='PUT')
     r.add_route('/tag/{id}', tag_handler.get_tag, method='GET')
