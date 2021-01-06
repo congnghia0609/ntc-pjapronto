@@ -3,6 +3,7 @@
 @since 06/01/2021
 """
 import bson
+from pymongo import DESCENDING
 
 from mdb import mdb
 
@@ -34,4 +35,13 @@ def update_tag(tag):
     rs = tag_table.find_one_and_replace({"_id": tag["_id"]}, tag)
     # tag_id = rs.inserted_id
     # tag['id'] = tag_id
+    return rs
+
+
+def total_tags():
+    return tag_table.count_documents({})
+
+
+def get_slide_tags(skip, limit):
+    rs = tag_table.find().skip(skip).limit(limit).sort("_id", DESCENDING)
     return rs

@@ -81,3 +81,49 @@ def get_tag(req):
     print(data_resp)
     return req.Response(json={'err': 0, 'msg': 'Get tag successfully', 'data': data_resp})
 
+
+def get_tags(req):
+    paging = 2
+    page = 1
+    is_more = False
+    tags = []
+    print(req.query)
+    # sp = req.query["page"]
+    # print("sp:", sp)
+    if "page" in req.query:
+        page = int(req.query["page"])
+    print("page:", page)
+    total = models.total_tags()
+    if total <= 0:
+        data_resp = {
+            "page": page,
+            "isMore": is_more,
+            "tags": tags,
+        }
+        return req.Response(json={'err': 0, 'msg': 'Get list tags successfully', 'data': data_resp})
+    max_page = (total-1)/paging + 1
+    if page > max_page:
+        data_resp = {
+            "page": page,
+            "isMore": is_more,
+            "tags": tags,
+        }
+        return req.Response(json={'err': 0, 'msg': 'Get list tags successfully', 'data': data_resp})
+    if page < max_page:
+        is_more = True
+    skip = (page - 1) * paging
+    tags_db = models.get_slide_tags(skip, paging)
+    for t in tags_db:
+        jt = {
+            "id": str(t['_id']),
+            "name": t['name'],
+            "updated_at": t['updated_at'].isoformat(),
+        }
+        tags.append(jt)
+    data_resp = {
+        "page": page,
+        "isMore": is_more,
+        "tags": tags,
+    }
+    print(data_resp)
+    return req.Response(json={'err': 0, 'msg': 'Get list tags successfully', 'data': data_resp})
