@@ -3,4 +3,4 @@
 @since 06/01/2021
 """
 # -*- coding: utf-8 -*-
-from .tag import add_tag
+from .tag import add_tag, get_tag, update_tag

@@ -2,6 +2,8 @@
 @author nghiatc
 @since 06/01/2021
 """
+import bson
+
 from mdb import mdb
 
 
@@ -17,9 +19,19 @@ class Tag:
 
 
 def add_tag(tag):
-    rs = tag_table.insert_one(tag)
+    tag_table.insert_one(tag)
     # tag_id = rs.inserted_id
     # tag['id'] = tag_id
     return tag
 
 
+def get_tag(oid):
+    return tag_table.find_one({"_id": oid})
+
+
+def update_tag(tag):
+    # tag_table.find_one_and_update(tag)
+    rs = tag_table.find_one_and_replace({"_id": tag["_id"]}, tag)
+    # tag_id = rs.inserted_id
+    # tag['id'] = tag_id
+    return rs

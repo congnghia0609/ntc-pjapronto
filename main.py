@@ -150,6 +150,8 @@ if __name__ == '__main__':
     # Tag API
     # http://localhost:8080/tag
     r.add_route('/tag', tag_handler.add_tag, method='POST')
+    r.add_route('/tag', tag_handler.update_tag, method='PUT')
+    r.add_route('/tag/{id}', tag_handler.get_tag, method='GET')
 
     # register all the error handlers so they are actually effective
     app.add_error_handler(RouteNotFoundException, handle_not_found)
