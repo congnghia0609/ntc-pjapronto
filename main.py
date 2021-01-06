@@ -4,8 +4,10 @@
 """
 
 import asyncio
+from http.cookies import SimpleCookie
 from json import JSONDecodeError
-from japronto import Application
+from japronto import Application, RouteNotFoundException
+from jinja2 import Template
 
 
 def hello(request):
@@ -78,6 +80,45 @@ def misc(request):
     return request.Response(text=text)
 
 
+# json Response: https://github.com/squeaky-pl/japronto/blob/master/tutorial/5_response.md
+def json(request):
+    return request.Response(json={'hello': 'world'})
+
+
+def cookies(request):
+    cookies = SimpleCookie()
+    cookies['hello'] = 'world'
+    cookies['hello']['domain'] = 'localhost'
+    cookies['hello']['path'] = '/'
+    cookies['hello']['max-age'] = 3600
+    cookies['city'] = 'São Paulo'
+    return request.Response(text='cookies', cookies=cookies)
+
+
+# This handler raises ZeroDivisionError which doesnt have an error
+# handler registered so it will result in 500 Internal Server Error
+def unhandled(request):
+    1 / 0
+
+
+# You can also override default 404 handler if you want
+def handle_not_found(request, exception):
+    return request.Response(code=404, text="Sorry can't find that!")
+
+
+# A view can read HTML from a file
+def home(request):
+    with open('views/layout.html') as layout_html:
+        return request.Response(text=layout_html.read(), mime_type='text/html')
+
+
+# A view could also return a rendered jinja2 template
+def jinja(request):
+    template = Template('<h1>Hello {{ name }}!</h1>')
+    return request.Response(text=template.render(name='World'),
+                            mime_type='text/html')
+
+
 if __name__ == '__main__':
     app = Application()
 
@@ -94,5 +135,18 @@ if __name__ == '__main__':
     r.add_route('/body', body)
     # http://localhost:8080/misc
     r.add_route('/misc', misc)
+    # http://localhost:8080/json
+    r.add_route('/json', json)
+    # http://localhost:8080/cookies
+    r.add_route('/cookies', cookies)
+    # http://localhost:8080/unhandled
+    r.add_route('/unhandled', unhandled)
+    # http://localhost:8080/home
+    r.add_route('/home', home)
+    # http://localhost:8080/template
+    r.add_route('/template', jinja)
+
+    # register all the error handlers so they are actually effective
+    app.add_error_handler(RouteNotFoundException, handle_not_found)
 
     app.run(port=8080, debug=True)
