@@ -1,1 +1,3 @@
 japronto
+jinja2
+pymongo

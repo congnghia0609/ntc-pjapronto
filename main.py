@@ -8,6 +8,7 @@ from http.cookies import SimpleCookie
 from json import JSONDecodeError
 from japronto import Application, RouteNotFoundException
 from jinja2 import Template
+from handler import tag_handler
 
 
 def hello(request):
@@ -145,6 +146,10 @@ if __name__ == '__main__':
     r.add_route('/home', home)
     # http://localhost:8080/template
     r.add_route('/template', jinja)
+
+    # Tag API
+    # http://localhost:8080/tag
+    r.add_route('/tag', tag_handler.add_tag, method='POST')
 
     # register all the error handlers so they are actually effective
     app.add_error_handler(RouteNotFoundException, handle_not_found)
